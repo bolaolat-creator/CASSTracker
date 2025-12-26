@@ -2,28 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>BOPC - Secure CA & Grading Portal</title>
+    <title>BOPC - Database CA Portal</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --blue: #0d47a1; --gold: #fbc02d; --red: #d32f2f; --green: #2e7d32; }
         body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; padding: 20px; }
-        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); }
         .header { text-align: center; border-bottom: 3px solid var(--blue); margin-bottom: 25px; padding-bottom: 10px; }
-        
-        /* Security Overlay */
-        #authOverlay { background: #fffde7; padding: 25px; border-radius: 10px; border: 2px dashed var(--blue); margin-bottom: 20px; text-align: center; transition: 0.3s; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
-        th { background: var(--blue); color: white; padding: 12px; }
+        #authOverlay { background: #fffde7; padding: 25px; border-radius: 10px; border: 2px dashed var(--blue); text-align: center; margin-bottom: 20px; }
+        .main-content { display:none; opacity: 0; transition: 0.5s; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background: var(--blue); color: white; padding: 10px; font-size: 12px; }
         td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-        
-        .main-content { opacity: 0.2; pointer-events: none; transition: 0.5s; }
-        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin: 5px; color: white; }
+        .stu-info { text-align: left; min-width: 200px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; }
         .btn-calc { background: var(--blue); }
         .btn-save { background: var(--gold); color: black; }
-        .btn-add { background: var(--green); }
-        
-        .remark-box { margin-top: 20px; padding: 15px; border-left: 5px solid var(--gold); background: #fff9c4; font-style: italic; display: none; }
+        input[type="number"] { width: 45px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -31,179 +26,169 @@
 <div class="container">
     <div class="header">
         <h1 style="margin:0; color:var(--blue);">BOLA OLAT PRIVATE COLLEGE</h1>
-        <p><strong>Secure Continuous Assessment & Grading Portal</strong></p>
+        <p><strong>Database-Driven Continuous Assessment Portal</strong></p>
     </div>
 
     <div id="authOverlay">
-        <h3 id="lockTitle">🔒 Portal Locked</h3>
-        <div id="inputArea">
-            <input type="password" id="pinInput" placeholder="Enter Staff PIN" style="padding:10px; border-radius:5px; border:1px solid #ccc; text-align:center;">
-            <button class="btn btn-calc" onclick="checkAccess()">Unlock System</button>
-            <p id="errorMsg" style="color:red; display:none; font-size:12px;">Access Denied: Invalid Authorization Code</p>
-        </div>
+        <h3 id="lockTitle">🔒 Teacher Authorization Required</h3>
+        <input type="password" id="pinInput" placeholder="Enter Staff PIN" style="padding:10px; border-radius:5px; border:1px solid #ccc;">
+        <button class="btn btn-calc" onclick="checkAccess()">Unlock</button>
     </div>
 
     <div id="mainPortal" class="main-content">
-        <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-            <input type="text" id="stuName" placeholder="Student Full Name" style="flex: 2; padding: 10px; border: 1px solid #ccc;">
-            <input type="text" id="stuClass" placeholder="Class" style="flex: 1; padding: 10px; border: 1px solid #ccc;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px; background: #f9f9f9; padding: 15px; border-radius: 8px;">
+            <div>
+                <label><b>Select Subject:</b></label><br>
+                <select id="subjectSelect" style="width:100%; padding:8px;">
+                    <option>Mathematics</option>
+                    <option>English Language</option>
+                    <option>Biology</option>
+                    <option>Economics</option>
+                </select>
+            </div>
+            <div>
+                <label><b>Select Class:</b></label><br>
+                <select id="classSelect" onchange="loadClassList()" style="width:100%; padding:8px;">
+                    <option value="">-- Choose Class --</option>
+                    <option value="JSS 1">JSS 1</option>
+                    <option value="SSS 1">SSS 1</option>
+                </select>
+            </div>
+            <div style="text-align: right;">
+                <label><b>Authorized Staff:</b></label><br>
+                <span id="staffIDDisplay" style="font-weight:bold; color:var(--green);"></span>
+            </div>
         </div>
 
         <table>
             <thead>
                 <tr>
-                    <th>Subject</th>
+                    <th>Student Name & Code</th>
                     <th>T1 (10)</th>
                     <th>T2 (10)</th>
                     <th>Notes (10)</th>
                     <th>Extra (5)</th>
-                    <th>Interact (5)</th>
+                    <th>Inter (5)</th>
                     <th>Total (40)</th>
                     <th>Grade</th>
                 </tr>
             </thead>
             <tbody id="caBody">
-                <tr>
-                    <td><input type="text" class="subj-name" placeholder="Subject Name"></td>
-                    <td><input type="number" class="t1" oninput="runLogic(this)" max="10"></td>
-                    <td><input type="number" class="t2" oninput="runLogic(this)" max="10"></td>
-                    <td><input type="number" class="note" oninput="runLogic(this)" max="10"></td>
-                    <td><input type="number" class="extra" oninput="runLogic(this)" max="5"></td>
-                    <td><input type="number" class="inter" oninput="runLogic(this)" max="5"></td>
-                    <td class="row-total" style="font-weight:bold;">0</td>
-                    <td class="row-grade">-</td>
-                </tr>
-            </tbody>
+                </tbody>
         </table>
 
-        <div id="principalRemark" class="remark-box">
-            <strong>Principal's Official Remark:</strong> <span id="remarkText"></span>
+        <div style="margin-top: 30px; text-align: center;">
+            <button class="btn btn-calc" onclick="generateVisuals()">Show Class Analytics</button>
+            <button class="btn btn-save" onclick="exportCSV()">💾 Save & Export Scores</button>
         </div>
-
-        <div style="margin-top: 20px; text-align: center;">
-            <button class="btn btn-add" onclick="addRow()">+ Add Subject</button>
-            <button class="btn btn-calc" onclick="generateVisuals()">Analyze Performance</button>
-            <button class="btn btn-save" onclick="exportCSV()">💾 Export & Secure Data</button>
-        </div>
-        
-        <canvas id="caChart" style="margin-top:30px; display:none;"></canvas>
+        <canvas id="caChart" style="margin-top:30px; max-height: 300px; display:none;"></canvas>
     </div>
 </div>
 
 <script>
-    // SECURITY: Obfuscated Codes (Base64)
-    // Teacher PINs: 1212, 3434 | Principal PIN: 0099
-    const _0x4f22 = ["MTIxMg==", "MzQzNA=="]; 
-    const _0x5a11 = "MDA5OQ=="; 
-    let currentUser = "";
+    // --- THE STUDENT DATABASE ---
+    const studentDatabase = {
+        "JSS 1": [
+            { name: "Adewale John", code: "BOPC/J1/001" },
+            { name: "Chukwuma Ngozi", code: "BOPC/J1/002" },
+            { name: "Fatima Ibrahim", code: "BOPC/J1/003" }
+        ],
+        "SSS 1": [
+            { name: "Olatunji Bola", code: "BOPC/S1/101" },
+            { name: "Smith Sarah", code: "BOPC/S1/102" }
+        ]
+    };
+
+    // SECURITY: PIN 1212, 3434 (Teachers) | 0099 (Principal)
+    const _0x4f = ["MTIxMg==", "MzQzNA=="]; 
+    const _0x5a = "MDA5OQ=="; 
+    let activeUser = "";
 
     function checkAccess() {
-        const input = document.getElementById('pinInput').value;
-        const encoded = btoa(input);
-        const error = document.getElementById('errorMsg');
-
-        if (encoded === _0x5a11) {
-            currentUser = "PRINCIPAL-MASTER";
-            unlock("👑 MASTER ACCESS: Principal Mode", "#e3f2fd");
-            document.getElementById('principalRemark').style.display = "block";
-        } else if (_0x4f22.includes(encoded)) {
-            currentUser = "TEACHER-" + input;
-            unlock("✅ AUTHORIZED: Teacher Mode", "#e8f5e9");
+        const pin = document.getElementById('pinInput').value;
+        const encoded = btoa(pin);
+        if (encoded === _0x5a || _0x4f.includes(encoded)) {
+            activeUser = encoded === _0x5a ? "PRINCIPAL" : "STAFF-"+pin;
+            document.getElementById('authOverlay').style.display = "none";
+            document.getElementById('mainPortal').style.display = "block";
+            document.getElementById('mainPortal').style.opacity = "1";
+            document.getElementById('staffIDDisplay').innerText = activeUser;
         } else {
-            error.style.display = "block";
+            alert("Invalid PIN!");
         }
     }
 
-    function unlock(msg, color) {
-        document.getElementById('authOverlay').style.backgroundColor = color;
-        document.getElementById('lockTitle').innerText = msg;
-        document.getElementById('inputArea').style.display = "none";
-        document.getElementById('mainPortal').style.opacity = "1";
-        document.getElementById('mainPortal').style.pointerEvents = "auto";
+    function loadClassList() {
+        const cls = document.getElementById('classSelect').value;
+        const students = studentDatabase[cls];
+        const body = document.getElementById('caBody');
+        body.innerHTML = "";
+        
+        if(!students) return;
+
+        students.forEach(s => {
+            body.innerHTML += `<tr>
+                <td class="stu-info"><b>${s.name}</b><br><small>${s.code}</small>
+                    <input type="hidden" class="h-name" value="${s.name}">
+                    <input type="hidden" class="h-code" value="${s.code}">
+                </td>
+                <td><input type="number" class="t1" oninput="calc(this)" max="10"></td>
+                <td><input type="number" class="t2" oninput="calc(this)" max="10"></td>
+                <td><input type="number" class="note" oninput="calc(this)" max="10"></td>
+                <td><input type="number" class="extra" oninput="calc(this)" max="5"></td>
+                <td><input type="number" class="inter" oninput="calc(this)" max="5"></td>
+                <td class="row-total" style="font-weight:bold;">0</td>
+                <td class="row-grade">-</td>
+            </tr>`;
+        });
     }
 
-    function addRow() {
-        const row = `<tr>
-            <td><input type="text" class="subj-name" placeholder="Subject Name"></td>
-            <td><input type="number" class="t1" oninput="runLogic(this)" max="10"></td>
-            <td><input type="number" class="t2" oninput="runLogic(this)" max="10"></td>
-            <td><input type="number" class="note" oninput="runLogic(this)" max="10"></td>
-            <td><input type="number" class="extra" oninput="runLogic(this)" max="5"></td>
-            <td><input type="number" class="inter" oninput="runLogic(this)" max="5"></td>
-            <td class="row-total" style="font-weight:bold;">0</td>
-            <td class="row-grade">-</td>
-        </tr>`;
-        document.getElementById('caBody').insertAdjacentHTML('beforeend', row);
-    }
-
-    function runLogic(el) {
+    function calc(el) {
         const row = el.closest('tr');
-        const scores = [
-            parseFloat(row.querySelector('.t1').value) || 0,
-            parseFloat(row.querySelector('.t2').value) || 0,
-            parseFloat(row.querySelector('.note').value) || 0,
-            parseFloat(row.querySelector('.extra').value) || 0,
-            parseFloat(row.querySelector('.inter').value) || 0
+        const vals = [
+            parseFloat(row.querySelector('.t1').value)||0,
+            parseFloat(row.querySelector('.t2').value)||0,
+            parseFloat(row.querySelector('.note').value)||0,
+            parseFloat(row.querySelector('.extra').value)||0,
+            parseFloat(row.querySelector('.inter').value)||0
         ];
+        const total = vals.reduce((a,b)=>a+b, 0);
+        row.querySelector('.row-total').innerText = total.toFixed(1);
         
-        const total = scores.reduce((a, b) => a + b, 0);
-        const totalCell = row.querySelector('.row-total');
-        const gradeCell = row.querySelector('.row-grade');
-        
-        totalCell.innerText = total.toFixed(1);
-
-        // Grade Mapping
         let grade = "F";
-        if (total >= 32) grade = "A (Distinction)";
-        else if (total >= 26) grade = "B (Credit)";
-        else if (total >= 20) grade = "C (Pass)";
-        else if (total >= 16) grade = "P (Pass)";
+        if(total >= 30) grade = "A";
+        else if(total >= 24) grade = "B";
+        else if(total >= 20) grade = "C";
         
-        gradeCell.innerText = grade;
-        gradeCell.style.color = total >= 20 ? "green" : "red";
-
-        updatePrincipalRemark();
+        row.querySelector('.row-grade').innerText = grade;
+        row.querySelector('.row-grade').style.color = total >= 20 ? "green" : "red";
     }
 
-    function updatePrincipalRemark() {
-        const totals = Array.from(document.querySelectorAll('.row-total')).map(td => parseFloat(td.innerText));
-        const avg = totals.reduce((a,b) => a+b, 0) / totals.length;
-        let remark = "Awaiting full entry.";
+    function exportCSV() {
+        const subject = document.getElementById('subjectSelect').value;
+        const cls = document.getElementById('classSelect').value;
+        let csv = "Teacher,Class,Subject,StudentName,SchoolCode,Total,Grade\n";
         
-        if (avg >= 30) remark = "Brilliant results. Student is an asset to the college.";
-        else if (avg >= 20) remark = "Good effort. Focus more on consistency in Note Taking.";
-        else remark = "Weak CA performance. Urgent parental meeting required.";
-        
-        document.getElementById('remarkText').innerText = remark;
+        document.querySelectorAll('#caBody tr').forEach(r => {
+            csv += `${activeUser},${cls},${subject},${r.querySelector('.h-name').value},${r.querySelector('.h-code').value},${r.querySelector('.row-total').innerText},${r.querySelector('.row-grade').innerText}\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `${cls}_${subject}_Report.csv`;
+        a.click();
     }
 
     function generateVisuals() {
         const canvas = document.getElementById('caChart');
         canvas.style.display = "block";
-        const labels = Array.from(document.querySelectorAll('.subj-name')).map(i => i.value || "Subj");
+        const labels = Array.from(document.querySelectorAll('.h-name')).map(i => i.value);
         const data = Array.from(document.querySelectorAll('.row-total')).map(td => parseFloat(td.innerText));
-
         new Chart(canvas.getContext('2d'), {
             type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{ label: 'CA Total (Out of 40)', data: data, backgroundColor: '#0d47a1' }]
-            }
+            data: { labels: labels, datasets: [{ label: 'Score out of 40', data: data, backgroundColor: '#0d47a1' }] }
         });
-        canvas.scrollIntoView({behavior: 'smooth'});
-    }
-
-    function exportCSV() {
-        let csv = "AuthID,Student,Subject,Total,Grade\n";
-        const name = document.getElementById('stuName').value || "Student";
-        document.querySelectorAll('#caBody tr').forEach(r => {
-            csv += `${currentUser},${name},${r.querySelector('.subj-name').value},${r.querySelector('.row-total').innerText},${r.querySelector('.row-grade').innerText}\n`;
-        });
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `BOPC_CA_${name}.csv`;
-        a.click();
     }
 </script>
 </body>
