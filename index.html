@@ -72,10 +72,10 @@
 </div>
 
 <script>
-// REPLACE WITH YOUR GOOGLE WEB APP URL FROM THE RECENT DEPLOYMENT
+
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKddNcjowgiUrW7rGSPDceP5tE-D8iPYxKmMH-GfrcPsRsHQUWHJGhK_gjXWA1xvPqow/exec";
 
-// ENCODED PERMISSIONS (Base64)
+
 const PERMISSIONS = {
     "QTlLMg==": {sub: "English Language", arm: "Senior"}, "UTNGOA==": {sub: "Mathematics", arm: "Senior"},
     "QjdNNA==": {sub: "Digital Tech", arm: "Senior"}, "WjJMOQ==": {sub: "Citizenship Ed", arm: "Senior"},
@@ -122,7 +122,7 @@ let allowedArm = "";
 
 function verifyAccess() {
     const rawPin = document.getElementById('staffPin').value;
-    const encodedInput = btoa(rawPin); // Encodes user input to Base64 to check
+    const encodedInput = btoa(rawPin); 
     const auth = PERMISSIONS[encodedInput];
     
     if(auth) {
