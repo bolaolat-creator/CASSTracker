@@ -72,73 +72,30 @@
 </div>
 
 <script>
-// REPLACE WITH YOUR GOOGLE WEB APP URL
+// REPLACE WITH YOUR GOOGLE WEB APP URL FROM THE RECENT DEPLOYMENT
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKddNcjowgiUrW7rGSPDceP5tE-D8iPYxKmMH-GfrcPsRsHQUWHJGhK_gjXWA1xvPqow/exec";
 
-<script>
-// THE PINs ARE NOW HIDDEN (ENCODED)
-// Students looking at this code will only see the scrambled text on the left.
+// ENCODED PERMISSIONS (Base64)
 const PERMISSIONS = {
-    "QTlLMg==": {sub:"English Language", arm:"Senior"}, 
-    "UTNGOA==": {sub:"Mathematics", arm:"Senior"},
-    "QjdNNA==": {sub:"Digital Tech", arm:"Senior"}, 
-    "WjJMOQ==": {sub:"Citizenship Ed", arm:"Senior"},
-    "TTRENw==": {sub:"Biology", arm:"Senior"}, 
-    "WDlQMg==": {sub:"Geography", arm:"Senior"},
-    "SDZLNQ==": {sub:"Chemistry", arm:"Senior"}, 
-    "TjFTOA==": {sub:"Physics", arm:"Senior"},
-    "RTdXMw==": {sub:"Further Maths", arm:"Senior"}, 
-    "SjRROQ==": {sub:"Agric Science", arm:"Senior"},
-    "UDVUNw==": {sub:"Economics", arm:"Senior"}, 
-    "RjlCNA==": {sub:"Accounting", arm:"Senior"},
-    "SzNFNg==": {sub:"Commerce", arm:"Senior"}, 
-    "VzVNOQ==": {sub:"Literature", arm:"Senior"},
-    "QTZONA==": {sub:"Yoruba", arm:"Senior"}, 
-    "RzhDMw==": {sub:"Government", arm:"Senior"},
-    "UjJKNw==": {sub:"CRS/IRS", arm:"Senior"},
-    "QjVTOQ==": {sub:"Mathematics", arm:"Junior"}, 
-    "WTRLNg==": {sub:"English Studies", arm:"Junior"},
-    "UjVDMQ==": {sub:"Basic Tech", arm:"Junior"}, 
-    "QzJSNg==": {sub:"Business Studies", arm:"Junior"},
-    "UzdIMg==": {sub:"CRS/IRS", arm:"Junior"}, 
-    "VjlUMQ==": {sub:"Digital Tech", arm:"Junior"},
-    "TTdQMw==": {sub:"French", arm:"Junior"}, 
-    "RTJMOA==": {sub:"Int. Science", arm:"Junior"},
-    "UTZENA==": {sub:"History", arm:"Junior"}, 
-    "SDFXNw==": {sub:"PHE", arm:"Junior"},
-    "VDNGOA==": {sub:"Pre-Vocational", arm:"Junior"}, 
-    "VDhBNg==": {sub:"Social/Citizen", arm:"Junior"},
-    "TDhWMQ==": {sub:"Social Studies", arm:"Junior"}, 
-    "RDFYOA==": {sub:"Yoruba", arm:"Junior"},
-    "MDA5OQ==": {sub:"Principal/Admin", arm:"Master"}
+    "QTlLMg==": {sub: "English Language", arm: "Senior"}, "UTNGOA==": {sub: "Mathematics", arm: "Senior"},
+    "QjdNNA==": {sub: "Digital Tech", arm: "Senior"}, "WjJMOQ==": {sub: "Citizenship Ed", arm: "Senior"},
+    "TTRENw==": {sub: "Biology", arm: "Senior"}, "WDlQMg==": {sub: "Geography", arm: "Senior"},
+    "SDZLNQ==": {sub: "Chemistry", arm: "Senior"}, "TjFTOA==": {sub: "Physics", arm: "Senior"},
+    "RTdXMw==": {sub: "Further Maths", arm: "Senior"}, "SjRROQ==": {sub: "Agric Science", arm: "Senior"},
+    "UDVUNw==": {sub: "Economics", arm: "Senior"}, "RjlCNA==": {sub: "Accounting", arm: "Senior"},
+    "SzNFNg==": {sub: "Commerce", arm: "Senior"}, "VzVNOQ==": {sub: "Literature", arm: "Senior"},
+    "QTZONA==": {sub: "Yoruba", arm: "Senior"}, "RzhDMw==": {sub: "Government", arm: "Senior"},
+    "UjJKNw==": {sub: "CRS/IRS", arm: "Senior"}, "QjVTOQ==": {sub: "Mathematics", arm: "Junior"},
+    "WTRLNg==": {sub: "English Studies", arm: "Junior"}, "UjVDMQ==": {sub: "Basic Tech", arm: "Junior"},
+    "QzJSNg==": {sub: "Business Studies", arm: "Junior"}, "UzdIMg==": {sub: "CRS/IRS", arm: "Junior"},
+    "VjlUMQ==": {sub: "Digital Tech", arm: "Junior"}, "TTdQMw==": {sub: "French", arm: "Junior"},
+    "RTJMOA==": {sub: "Int. Science", arm: "Junior"}, "UTZENA==": {sub: "History", arm: "Junior"},
+    "SDFXNw==": {sub: "PHE", arm: "Junior"}, "VDNGOA==": {sub: "Pre-Vocational", arm: "Junior"},
+    "VDhBNg==": {sub: "Social/Citizen", arm: "Junior"}, "TDhWMQ==": {sub: "Social Studies", arm: "Junior"},
+    "RDFYOA==": {sub: "Yoruba", arm: "Junior"}, "MDA5OQ==": {sub: "Principal/Admin", arm: "Master"}
 };
 
-function verifyAccess() {
-    const rawPin = document.getElementById('staffPin').value;
-    
-    // This line "encodes" the teacher's input to check against our hidden list
-    const encodedInput = btoa(rawPin); 
-    
-    const auth = PERMISSIONS[encodedInput];
-    
-    if(auth) {
-        activeUser = "Staff-" + auth.sub;
-        allowedArm = auth.arm;
-        
-        document.getElementById('authSection').classList.add('hidden');
-        document.getElementById('mainPortal').classList.remove('hidden');
-        document.getElementById('logoutBtn').classList.remove('hidden');
-        document.getElementById('subjectLabel').innerText = auth.sub + " (" + auth.arm + ")";
-        
-        // ... rest of the logic to load classes (same as before)
-        loadClassOptions(); 
-    } else { 
-        alert("Invalid PIN. Access Denied."); 
-    }
-}
-</script>
-
-// FULL STUDENT DATABASE FROM CSV
+// FULL STUDENT DATABASE (208 Students)
 const studentDatabase = {
     "Basic 7": [
         {"n": "TAIWO OLUWASEUN", "c": "BOC1226"}, {"n": "KEHINDE OLUWASEUN", "c": "BOC1227"}, {"n": "FIYINFOLUWA JIMOH", "c": "BOC1229"}, {"n": "INIOLUWA WHINGAN", "c": "BOC1230"}, {"n": "AISHAT AHMED", "c": "BOC1231"}, {"n": "OREOLUWA BADEKALE", "c": "BOC1234"}, {"n": "VICTOR JAMES", "c": "BOC1235"}, {"n": "SELIM SAHEED", "c": "BOC1237"}, {"n": "EMMANUEL NWAMBA", "c": "BOC1239"}, {"n": "OLAMIDE JAMES", "c": "BOC1240"}, {"n": "ABDUL MUMEEN MUSA", "c": "BOC1241"}, {"n": "AL-MUBARAQ OLANREWAJU", "c": "BOC1242"}, {"n": "ABDUL-RAHMON MUTOHIR", "c": "BOC1246"}, {"n": "OLADEHINDE AKANNI", "c": "BOC1247"}, {"n": "AL-HAMIN IDOWU", "c": "BOC1249"}, {"n": "IREMIDE EMIOLA", "c": "BOC1251"}, {"n": "LIVINGSTONES JOHN-CHIDI", "c": "BOC1252"}, {"n": "IREWANDE JOSEPH", "c": "BOC1256"}, {"n": "RAMADAN BAKARE", "c": "BOC1257"}, {"n": "OLADUNSI OYEBOWALE", "c": "BOC1258"}, {"n": "OPEMIPO ALAUSA", "c": "BOC1259"}, {"n": "TEMIDOYIN AKINSEYE", "c": "BOC1261"}, {"n": "OLUWATIMILEYIN OMOBUWA", "c": "BOC1263"}, {"n": "DESTINY FOLORUNSHO", "c": "BOC1264"}, {"n": "OLAWUNMI OLAYIWOLA", "c": "BOC1265"}, {"n": "AKANNI EMMANUEL", "c": "BOC1267"}, {"n": "OLUWADARASIMI ALABI", "c": "BOC1270"}, {"n": "DAVID GBADEBO", "c": "BOC1271"}, {"n": "MOHAMMED ADESANYA", "c": "BOC1272"}, {"n": "FAREEDAH ADENEKAN", "c": "BOC1273"}, {"n": "KAMALIDEEN ODUKOYA", "c": "BOC1274"}, {"n": "Richard Adeboye", "c": "BOC1276"}, {"n": "Boluwatife Adeyemi", "c": "BOC1277"}, {"n": "Sarah Adebayo", "c": "BOC1278"}, {"n": "Okikiola Odutola", "c": "BOC1279"}, {"n": "Favour Joseph", "c": "BOC1280"}
@@ -164,8 +121,9 @@ let activeUser = "";
 let allowedArm = "";
 
 function verifyAccess() {
-    const pin = document.getElementById('staffPin').value;
-    const auth = PERMISSIONS[pin];
+    const rawPin = document.getElementById('staffPin').value;
+    const encodedInput = btoa(rawPin); // Encodes user input to Base64 to check
+    const auth = PERMISSIONS[encodedInput];
     
     if(auth) {
         activeUser = "Staff-" + auth.sub;
@@ -180,7 +138,6 @@ function verifyAccess() {
         classSelect.innerHTML = '<option value="">-- Choose Class --</option>';
         
         let classes = [];
-        // Updated class names to Basic 7, 8, 9
         if(allowedArm === "Junior") classes = ["Basic 7", "Basic 8", "Basic 9"];
         else if(allowedArm === "Senior") classes = ["Senior 1", "Senior 2", "Senior 3"];
         else if(allowedArm === "Master") classes = ["Basic 7", "Basic 8", "Basic 9", "Senior 1", "Senior 2", "Senior 3"];
