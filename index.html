@@ -75,26 +75,68 @@
 // REPLACE WITH YOUR GOOGLE WEB APP URL
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKddNcjowgiUrW7rGSPDceP5tE-D8iPYxKmMH-GfrcPsRsHQUWHJGhK_gjXWA1xvPqow/exec";
 
-// FULL STAFF PIN DIRECTORY
+<script>
+// THE PINs ARE NOW HIDDEN (ENCODED)
+// Students looking at this code will only see the scrambled text on the left.
 const PERMISSIONS = {
-    "A9K2": {sub:"English Language", arm:"Senior"}, "Q3F8": {sub:"Mathematics", arm:"Senior"},
-    "B7M4": {sub:"Digital Tech", arm:"Senior"}, "Z2L9": {sub:"Citizenship Ed", arm:"Senior"},
-    "M4D7": {sub:"Biology", arm:"Senior"}, "X9P2": {sub:"Geography", arm:"Senior"},
-    "H6K5": {sub:"Chemistry", arm:"Senior"}, "N1S8": {sub:"Physics", arm:"Senior"},
-    "E7W3": {sub:"Further Maths", arm:"Senior"}, "J4Q9": {sub:"Agric Science", arm:"Senior"},
-    "P5T7": {sub:"Economics", arm:"Senior"}, "F9B4": {sub:"Accounting", arm:"Senior"},
-    "K3E6": {sub:"Commerce", arm:"Senior"}, "W5M9": {sub:"Literature", arm:"Senior"},
-    "A6N4": {sub:"Yoruba", arm:"Senior"}, "G8C3": {sub:"Government", arm:"Senior"},
-    "R2J7": {sub:"CRS/IRS", arm:"Senior"},
-    "B5S9": {sub:"Mathematics", arm:"Junior"}, "Y4K6": {sub:"English Studies", arm:"Junior"},
-    "R5C1": {sub:"Basic Tech", arm:"Junior"}, "C2R6": {sub:"Business Studies", arm:"Junior"},
-    "S7H2": {sub:"CRS/IRS", arm:"Junior"}, "V9T1": {sub:"Digital Tech", arm:"Junior"},
-    "M7P3": {sub:"French", arm:"Junior"}, "E2L8": {sub:"Int. Science", arm:"Junior"},
-    "Q6D4": {sub:"History", arm:"Junior"}, "H1W7": {sub:"PHE", arm:"Junior"},
-    "T3F8": {sub:"Pre-Vocational", arm:"Junior"}, "T8A6": {sub:"Social/Citizen", arm:"Junior"},
-    "L8V1": {sub:"Social Studies", arm:"Junior"}, "D1X8": {sub:"Yoruba", arm:"Junior"},
-    "0099": {sub:"Principal/Admin", arm:"Master"}
+    "QTlLMg==": {sub:"English Language", arm:"Senior"}, 
+    "UTNGOA==": {sub:"Mathematics", arm:"Senior"},
+    "QjdNNA==": {sub:"Digital Tech", arm:"Senior"}, 
+    "WjJMOQ==": {sub:"Citizenship Ed", arm:"Senior"},
+    "TTRENw==": {sub:"Biology", arm:"Senior"}, 
+    "WDlQMg==": {sub:"Geography", arm:"Senior"},
+    "SDZLNQ==": {sub:"Chemistry", arm:"Senior"}, 
+    "TjFTOA==": {sub:"Physics", arm:"Senior"},
+    "RTdXMw==": {sub:"Further Maths", arm:"Senior"}, 
+    "SjRROQ==": {sub:"Agric Science", arm:"Senior"},
+    "UDVUNw==": {sub:"Economics", arm:"Senior"}, 
+    "RjlCNA==": {sub:"Accounting", arm:"Senior"},
+    "SzNFNg==": {sub:"Commerce", arm:"Senior"}, 
+    "VzVNOQ==": {sub:"Literature", arm:"Senior"},
+    "QTZONA==": {sub:"Yoruba", arm:"Senior"}, 
+    "RzhDMw==": {sub:"Government", arm:"Senior"},
+    "UjJKNw==": {sub:"CRS/IRS", arm:"Senior"},
+    "QjVTOQ==": {sub:"Mathematics", arm:"Junior"}, 
+    "WTRLNg==": {sub:"English Studies", arm:"Junior"},
+    "UjVDMQ==": {sub:"Basic Tech", arm:"Junior"}, 
+    "QzJSNg==": {sub:"Business Studies", arm:"Junior"},
+    "UzdIMg==": {sub:"CRS/IRS", arm:"Junior"}, 
+    "VjlUMQ==": {sub:"Digital Tech", arm:"Junior"},
+    "TTdQMw==": {sub:"French", arm:"Junior"}, 
+    "RTJMOA==": {sub:"Int. Science", arm:"Junior"},
+    "UTZENA==": {sub:"History", arm:"Junior"}, 
+    "SDFXNw==": {sub:"PHE", arm:"Junior"},
+    "VDNGOA==": {sub:"Pre-Vocational", arm:"Junior"}, 
+    "VDhBNg==": {sub:"Social/Citizen", arm:"Junior"},
+    "TDhWMQ==": {sub:"Social Studies", arm:"Junior"}, 
+    "RDFYOA==": {sub:"Yoruba", arm:"Junior"},
+    "MDA5OQ==": {sub:"Principal/Admin", arm:"Master"}
 };
+
+function verifyAccess() {
+    const rawPin = document.getElementById('staffPin').value;
+    
+    // This line "encodes" the teacher's input to check against our hidden list
+    const encodedInput = btoa(rawPin); 
+    
+    const auth = PERMISSIONS[encodedInput];
+    
+    if(auth) {
+        activeUser = "Staff-" + auth.sub;
+        allowedArm = auth.arm;
+        
+        document.getElementById('authSection').classList.add('hidden');
+        document.getElementById('mainPortal').classList.remove('hidden');
+        document.getElementById('logoutBtn').classList.remove('hidden');
+        document.getElementById('subjectLabel').innerText = auth.sub + " (" + auth.arm + ")";
+        
+        // ... rest of the logic to load classes (same as before)
+        loadClassOptions(); 
+    } else { 
+        alert("Invalid PIN. Access Denied."); 
+    }
+}
+</script>
 
 // FULL STUDENT DATABASE FROM CSV
 const studentDatabase = {
