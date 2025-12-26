@@ -6,19 +6,20 @@
     <title>BOPC Staff - Secure CA Portal</title>
     <style>
         :root { --blue: #0d47a1; --gold: #fbc02d; --red: #d32f2f; --green: #2e7d32; --light: #f4f7f6; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--light); padding: 20px; margin: 0; }
-        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .header { text-align: center; border-bottom: 4px solid var(--blue); margin-bottom: 25px; padding-bottom: 10px; position: relative; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--light); padding: 20px; margin: 0; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; }
+        .header { text-align: center; border-bottom: 4px solid var(--blue); margin-bottom: 25px; padding-bottom: 10px; }
         #authSection { background: #fffde7; padding: 50px; border-radius: 10px; text-align: center; border: 2px dashed var(--blue); max-width: 400px; margin: 50px auto; }
         .hidden { display: none; }
         .dashboard-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; background: #f9f9f9; padding: 20px; border-radius: 10px; margin-bottom: 25px; border: 1px solid #ddd; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
         th { background: var(--blue); color: white; padding: 15px; font-size: 13px; text-transform: uppercase; }
-        td { border: 1px solid #eee; padding: 12px; text-align: center; }
-        input[type="number"] { width: 65px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; text-align: center; font-weight: bold; font-size: 16px; }
+        td { border: 1px solid #eee; padding: 10px; text-align: center; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        input[type="number"] { width: 60px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; text-align: center; font-weight: bold; font-size: 16px; }
         .total-box { font-weight: 800; color: var(--blue); background: #e3f2fd; padding: 10px; border-radius: 4px; font-size: 18px; display: inline-block; min-width: 50px; }
-        .btn { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; transition: 0.3s; }
-        .logout-btn { background: var(--red); position: absolute; right: 0; top: 10px; padding: 8px 15px; font-size: 12px; }
+        .btn { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; transition: 0.3s; }
+        .logout-btn { background: var(--red); position: absolute; right: 20px; top: 20px; font-size: 12px; }
         #syncStatus { font-weight: bold; padding: 8px 15px; border-radius: 20px; background: #eee; font-size: 14px; }
         .status-syncing { background: #fff9c4 !important; color: #f57f17; }
         .status-success { background: #c8e6c9 !important; color: #2e7d32; }
@@ -27,15 +28,16 @@
 <body>
 
 <div class="container">
+    <button id="logoutBtn" class="btn logout-btn hidden" onclick="logout()">LOGOUT</button>
+    
     <div class="header">
-        <button id="logoutBtn" class="btn logout-btn hidden" onclick="logout()">LOGOUT</button>
         <h1 style="color:var(--blue); margin:0;">BOLA OLAT PRIVATE COLLEGE</h1>
         <p style="margin:5px 0; font-weight: bold; color: #555;">STAFF CA PORTAL - SECURE ACCESS</p>
     </div>
 
     <div id="authSection">
         <h2 style="color:var(--blue); margin-top:0;">Teacher Login</h2>
-        <input type="password" id="staffPin" placeholder="Enter Subject PIN" style="padding:15px; font-size:20px; border:2px solid var(--blue); width: 100%; text-align: center; box-sizing: border-box; border-radius: 8px;">
+        <input type="password" id="staffPin" placeholder="Enter Subject PIN" style="padding:15px; font-size:20px; border:2px solid var(--blue); width: 100%; text-align: center; border-radius: 8px; box-sizing: border-box;">
         <br><br>
         <button class="btn" style="background:var(--blue); width:100%;" onclick="verifyAccess()">Access My Classes</button>
     </div>
@@ -47,12 +49,12 @@
                 <div id="subjectLabel" style="padding:10px; font-weight:bold; color:var(--blue); background:#e3f2fd; border-radius:5px; border:1px solid #bbdefb; margin-top:5px;"></div>
             </div>
             <div>
-                <label><b>Assigned Class:</b></label>
+                <label><b>Select Assigned Class:</b></label>
                 <select id="classSelect" onchange="loadStudents()" style="width:100%; padding:10px; border:1px solid var(--blue); border-radius: 5px; margin-top:5px; font-weight:bold;"></select>
             </div>
             <div style="text-align:center;">
-                <label><b>Cloud Sync Status:</b></label><br>
-                <div style="margin-top:10px;"><span id="syncStatus">Ready</span></div>
+                <label><b>Cloud Sync:</b></label><br>
+                <div style="margin-top:10px;"><span id="syncStatus">System Ready</span></div>
             </div>
         </div>
 
@@ -70,14 +72,31 @@
 </div>
 
 <script>
+// REPLACE WITH YOUR GOOGLE WEB APP URL
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwRd15pg_DwB6w9KnGmIa2O9gZ_Z21O0GtC90kxeBGbTx-uDcnt9rnQxGwS63zgyeRFTg/exec";
 
+// FULL STAFF PIN DIRECTORY
 const PERMISSIONS = {
-    "A9K2": {sub:"English", arm:"Senior"}, "Q3F8": {sub:"Mathematics", arm:"Senior"},
-    "B5S9": {sub:"Mathematics", arm:"Junior"}, "Y4K6": {sub:"English", arm:"Junior"},
-    "0099": {sub:"Principal", arm:"Master"}
+    "A9K2": {sub:"English Language", arm:"Senior"}, "Q3F8": {sub:"Mathematics", arm:"Senior"},
+    "B7M4": {sub:"Digital Tech", arm:"Senior"}, "Z2L9": {sub:"Citizenship Ed", arm:"Senior"},
+    "M4D7": {sub:"Biology", arm:"Senior"}, "X9P2": {sub:"Geography", arm:"Senior"},
+    "H6K5": {sub:"Chemistry", arm:"Senior"}, "N1S8": {sub:"Physics", arm:"Senior"},
+    "E7W3": {sub:"Further Maths", arm:"Senior"}, "J4Q9": {sub:"Agric Science", arm:"Senior"},
+    "P5T7": {sub:"Economics", arm:"Senior"}, "F9B4": {sub:"Accounting", arm:"Senior"},
+    "K3E6": {sub:"Commerce", arm:"Senior"}, "W5M9": {sub:"Literature", arm:"Senior"},
+    "A6N4": {sub:"Yoruba", arm:"Senior"}, "G8C3": {sub:"Government", arm:"Senior"},
+    "R2J7": {sub:"CRS/IRS", arm:"Senior"},
+    "B5S9": {sub:"Mathematics", arm:"Junior"}, "Y4K6": {sub:"English Studies", arm:"Junior"},
+    "R5C1": {sub:"Basic Tech", arm:"Junior"}, "C2R6": {sub:"Business Studies", arm:"Junior"},
+    "S7H2": {sub:"CRS/IRS", arm:"Junior"}, "V9T1": {sub:"Digital Tech", arm:"Junior"},
+    "M7P3": {sub:"French", arm:"Junior"}, "E2L8": {sub:"Int. Science", arm:"Junior"},
+    "Q6D4": {sub:"History", arm:"Junior"}, "H1W7": {sub:"PHE", arm:"Junior"},
+    "T3F8": {sub:"Pre-Vocational", arm:"Junior"}, "T8A6": {sub:"Social/Citizen", arm:"Junior"},
+    "L8V1": {sub:"Social Studies", arm:"Junior"}, "D1X8": {sub:"Yoruba", arm:"Junior"},
+    "0099": {sub:"Principal/Admin", arm:"Master"}
 };
 
+// FULL STUDENT DATABASE
 const studentDatabase = {
     "Basic 1": [{n:"Student BOC1226",c:"BOC1226"},{n:"Student BOC1227",c:"BOC1227"},{n:"Student BOC1229",c:"BOC1229"},{n:"Student BOC1230",c:"BOC1230"},{n:"Student BOC1231",c:"BOC1231"},{n:"Student BOC1234",c:"BOC1234"},{n:"Student BOC1235",c:"BOC1235"},{n:"Student BOC1237",c:"BOC1237"},{n:"Student BOC1239",c:"BOC1239"},{n:"Student BOC1240",c:"BOC1240"},{n:"Student BOC1241",c:"BOC1241"},{n:"Student BOC1242",c:"BOC1242"},{n:"Student BOC1246",c:"BOC1246"},{n:"Student BOC1247",c:"BOC1247"},{n:"Student BOC1249",c:"BOC1249"},{n:"Student BOC1251",c:"BOC1251"},{n:"Student BOC1252",c:"BOC1252"},{n:"Student BOC1256",c:"BOC1256"},{n:"Student BOC1257",c:"BOC1257"},{n:"Student BOC1258",c:"BOC1258"},{n:"Student BOC1259",c:"BOC1259"},{n:"Student BOC1261",c:"BOC1261"},{n:"Student BOC1263",c:"BOC1263"},{n:"Student BOC1264",c:"BOC1264"},{n:"Student BOC1265",c:"BOC1265"},{n:"Student BOC1267",c:"BOC1267"},{n:"Student BOC1270",c:"BOC1270"},{n:"Student BOC1271",c:"BOC1271"},{n:"Student BOC1272",c:"BOC1272"},{n:"Student BOC1273",c:"BOC1273"},{n:"Student BOC1274",c:"BOC1274"},{n:"Student BOC1276",c:"BOC1276"},{n:"Student BOC1277",c:"BOC1277"},{n:"Student BOC1278",c:"BOC1278"},{n:"Student BOC1279",c:"BOC1279"},{n:"Student BOC1280",c:"BOC1280"}],
     "Basic 2": [{n:"Student BOC1150",c:"BOC1150"},{n:"Student BOC1151",c:"BOC1151"},{n:"Student BOC1152",c:"BOC1152"},{n:"Student BOC1153",c:"BOC1153"},{n:"Student BOC1154",c:"BOC1154"},{n:"Student BOC1155",c:"BOC1155"},{n:"Student BOC1156",c:"BOC1156"},{n:"Student BOC1157",c:"BOC1157"},{n:"Student BOC1158",c:"BOC1158"},{n:"Student BOC1159",c:"BOC1159"},{n:"Student BOC1160",c:"BOC1160"},{n:"Student BOC1161",c:"BOC1161"},{n:"Student BOC1162",c:"BOC1162"},{n:"Student BOC1163",c:"BOC1163"},{n:"Student BOC1164",c:"BOC1164"},{n:"Student BOC1165",c:"BOC1165"},{n:"Student BOC1166",c:"BOC1166"},{n:"Student BOC1167",c:"BOC1167"},{n:"Student BOC1183",c:"BOC1183"},{n:"Student BOC1184",c:"BOC1184"},{n:"Student BOC1185",c:"BOC1185"},{n:"Student BOC1186",c:"BOC1186"},{n:"Student BOC1187",c:"BOC1187"},{n:"Student BOC1188",c:"BOC1188"},{n:"Student BOC1189",c:"BOC1189"},{n:"Student BOC1190",c:"BOC1190"},{n:"Student BOC1193",c:"BOC1193"},{n:"Student BOC1194",c:"BOC1194"},{n:"Student BOC1195",c:"BOC1195"},{n:"Student BOC1197",c:"BOC1197"},{n:"Student BOC1198",c:"BOC1198"},{n:"Student BOC1199",c:"BOC1199"},{n:"Student BOC1201",c:"BOC1201"},{n:"Student BOC1202",c:"BOC1202"},{n:"Student BOC1203",c:"BOC1203"},{n:"Student BOC1204",c:"BOC1204"},{n:"Student BOC1205",c:"BOC1205"},{n:"Student BOC1207",c:"BOC1207"},{n:"Student BOC1211",c:"BOC1211"},{n:"Student BOC1214",c:"BOC1214"}],
@@ -116,17 +135,17 @@ function verifyAccess() {
             opt.value = cls; opt.innerText = cls;
             classSelect.appendChild(opt);
         });
-    } else { alert("Invalid PIN"); }
+    } else { alert("Invalid PIN. Access Denied."); }
 }
 
 function logout() {
-    activeUser = "";
-    allowedArm = "";
+    activeUser = ""; allowedArm = "";
     document.getElementById('staffPin').value = "";
     document.getElementById('studentTableBody').innerHTML = "";
     document.getElementById('authSection').classList.remove('hidden');
     document.getElementById('mainPortal').classList.add('hidden');
     document.getElementById('logoutBtn').classList.add('hidden');
+    document.getElementById('syncStatus').innerText = "Logged Out";
 }
 
 function loadStudents() {
@@ -137,9 +156,11 @@ function loadStudents() {
 
     studentDatabase[cls].forEach(s => {
         body.innerHTML += `<tr>
-            <td style="text-align:left; padding-left:20px;">
-                <span style="font-weight:600;">${s.n}</span><br><small>ID: ${s.c}</small>
-                <input type="hidden" class="h-name" value="${s.n}"><input type="hidden" class="h-code" value="${s.c}">
+            <td style="text-align:left;">
+                <span style="font-weight:600; color:#333;">${s.n}</span><br>
+                <small style="color:#666;">ID: ${s.c}</small>
+                <input type="hidden" class="h-name" value="${s.n}">
+                <input type="hidden" class="h-code" value="${s.c}">
             </td>
             <td><input type="number" class="t1" value="0" min="0" max="10" onchange="processChange(this)"></td>
             <td><input type="number" class="t2" value="0" min="0" max="10" onchange="processChange(this)"></td>
@@ -160,8 +181,8 @@ function processChange(el) {
         const input = row.querySelector('.' + key);
         let val = parseFloat(input.value) || 0;
         if(val > limits[key] || val < 0) {
-            hasError = true; input.style.background = "#ffebee";
-        } else { input.style.background = "white"; }
+            hasError = true; input.style.border = "2px solid red";
+        } else { input.style.border = "1px solid #ccc"; }
     });
 
     const totalDisplay = row.querySelector('.row-total');
@@ -189,8 +210,8 @@ async function syncToCloud(row, total) {
                 total: total
             })
         });
-        statusEl.innerText = "✔ Saved"; statusEl.className = "status-success";
-    } catch (e) { statusEl.innerText = "❌ Error"; }
+        statusEl.innerText = "✔ All Saved"; statusEl.className = "status-success";
+    } catch (e) { statusEl.innerText = "❌ Sync Error"; }
 }
 </script>
 </body>
