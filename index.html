@@ -3,144 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BOPC - Master Cloud Portal</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>BOPC Staff - CA Input</title>
     <style>
         :root { --blue: #0d47a1; --gold: #fbc02d; --red: #d32f2f; --green: #2e7d32; --light: #f4f7f6; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--light); padding: 20px; color: #333; }
-        .container { max-width: 1250px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        
-        .header { text-align: center; border-bottom: 4px solid var(--blue); margin-bottom: 25px; padding-bottom: 15px; }
-        .header h1 { margin: 0; color: var(--blue); letter-spacing: 1px; }
-        
-        #authSection { background: #fff9c4; padding: 30px; border-radius: 10px; text-align: center; border: 2px dashed var(--gold); }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--light); padding: 20px; margin: 0; }
+        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .header { text-align: center; border-bottom: 4px solid var(--blue); margin-bottom: 25px; padding-bottom: 10px; }
+        #authSection { background: #fffde7; padding: 40px; border-radius: 10px; text-align: center; border: 2px dashed var(--blue); }
         .hidden { display: none; }
-        
-        .dashboard-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; background: #f9f9f9; padding: 20px; border-radius: 10px; margin-bottom: 25px; border: 1px solid #ddd; }
-        
-        table { width: 100%; border-collapse: collapse; background: white; }
-        th { background: var(--blue); color: white; padding: 12px; font-size: 12px; position: sticky; top: 0; }
-        td { border: 1px solid #eee; padding: 8px; text-align: center; }
-        .stu-info { text-align: left; font-weight: bold; font-size: 13px; }
-        
-        input[type="number"] { width: 55px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; text-align: center; font-weight: bold; }
-        .exam-input { background: #fffde7; border: 1px solid var(--gold) !important; }
-        
+        .dashboard-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; background: #f9f9f9; padding: 20px; border-radius: 10px; margin-bottom: 25px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background: var(--blue); color: white; padding: 12px; font-size: 13px; text-transform: uppercase; }
+        td { border: 1px solid #eee; padding: 10px; text-align: center; }
+        input[type="number"] { width: 60px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; text-align: center; font-weight: bold; font-size: 16px; }
+        .total-box { font-weight: bold; color: var(--blue); background: #e3f2fd; padding: 8px; border-radius: 4px; font-size: 18px; }
         .btn { padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; transition: 0.3s; }
-        .btn-lock { background: var(--red); }
-        .btn-unlock { background: var(--gold); color: black; }
-
-        #summaryDash { margin-top: 20px; padding: 15px; border-radius: 8px; display: flex; justify-content: space-around; border: 2px solid #ddd; transition: 0.5s; }
-        .stat-box { text-align: center; }
-        .stat-val { font-size: 24px; font-weight: bold; display: block; }
+        #syncStatus { font-weight: bold; padding: 5px 10px; border-radius: 20px; background: #eee; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h1>BOLA OLAT PRIVATE COLLEGE</h1>
-        <p>Master Cloud Academic Portal & Records</p>
+        <h1 style="color:var(--blue); margin:0;">BOLA OLAT PRIVATE COLLEGE</h1>
+        <p style="margin:5px 0;">Continuous Assessment (CA) Management Portal</p>
     </div>
 
     <div id="authSection">
-        <h3>🔒 Secure Access</h3>
-        <input type="password" id="staffPin" placeholder="Enter PIN" style="padding:12px; border-radius:5px; text-align:center; font-size:18px;">
-        <button class="btn" style="background:var(--blue);" onclick="verifyAccess()">Unlock Portal</button>
+        <h2 style="color:var(--blue);">Staff Login</h2>
+        <input type="password" id="staffPin" placeholder="Enter Subject PIN" style="padding:15px; font-size:20px; border:2px solid var(--blue); width: 250px; text-align: center;">
+        <br><br>
+        <button class="btn" style="background:var(--blue); width:250px;" onclick="verifyAccess()">Access CA Records</button>
     </div>
 
     <div id="mainPortal" class="hidden">
         <div id="adminControls" class="hidden" style="background:#e3f2fd; padding:15px; border-radius:10px; margin-bottom:15px; border:1px solid var(--blue);">
-            <button id="lockBtn" class="btn btn-lock" onclick="toggleLock()">🔒 Freeze Records</button>
-            <span style="margin-left:15px; font-weight:bold; color:var(--blue);">PRINCIPAL MASTER MODE</span>
+            <button id="lockBtn" class="btn" style="background:var(--red);" onclick="toggleLock()">🔒 Freeze Records</button>
+            <span style="margin-left:15px; font-weight:bold; color:var(--blue);">PRINCIPAL MODE</span>
         </div>
 
         <div class="dashboard-controls">
-            <div>
-                <label><b>Academic Arm:</b></label><br>
-                <select id="armSelect" onchange="updateSubjects()" style="width:100%; padding:10px;">
-                    <option value="">-- Select --</option>
-                    <option value="Junior">Junior (Basic 7-9)</option>
-                    <option value="Senior">Senior (SS 1-3)</option>
-                </select>
+            <div><label><b>Authorized Subject:</b></label><br>
+                <select id="subjectSelect" style="width:100%; padding:10px; font-weight:bold;" disabled></select>
             </div>
-            <div>
-                <label><b>Specific Class:</b></label><br>
-                <select id="classSelect" onchange="loadStudents()" style="width:100%; padding:10px;">
-                    <option value="">-- Select --</option>
-                </select>
+            <div><label><b>Class:</b></label><br>
+                <select id="classSelect" onchange="loadStudents()" style="width:100%; padding:10px; border:1px solid var(--blue);"></select>
             </div>
-            <div>
-                <label><b>Subject:</b></label><br>
-                <select id="subjectSelect" style="width:100%; padding:10px;">
-                    <option value="">-- Select --</option>
-                </select>
-            </div>
-            <div style="text-align:center;">
-                <label><b>Sync Status:</b></label><br>
-                <span id="syncStatus" style="font-weight:bold; color:var(--gold);">Ready</span>
+            <div style="text-align:center;"><label><b>Cloud Sync:</b></label><br>
+                <span id="syncStatus" style="color:var(--green);">Ready</span>
             </div>
         </div>
 
         <table>
             <thead>
                 <tr>
-                    <th>Student Details</th>
+                    <th style="text-align:left;">Student Name & ID</th>
                     <th>T1(10)</th>
                     <th>T2(10)</th>
                     <th>Note(10)</th>
                     <th>Ext(5)</th>
                     <th>Int(5)</th>
-                    <th>Exam(60)</th>
-                    <th>Total(100)</th>
-                    <th>Grade</th>
+                    <th style="background:var(--gold); color:black;">CA Total (40)</th>
                 </tr>
             </thead>
             <tbody id="studentTableBody"></tbody>
         </table>
-
-        <div id="summaryDash">
-            <div class="stat-box">
-                <span class="stat-val" id="statTotal">0</span>
-                <small>Students</small>
-            </div>
-            <div class="stat-box">
-                <span class="stat-val" id="statSynced" style="color:var(--green);">0</span>
-                <small>Synced</small>
-            </div>
-            <div class="stat-box">
-                <span class="stat-val" id="statErrors" style="color:var(--red);">0</span>
-                <small>Errors to Fix</small>
-            </div>
-        </div>
     </div>
 </div>
 
 <script>
-// --- CONFIGURATION ---
-const CLOUD_URL = "https://script.google.com/macros/s/AKfycbwNIvAjbriyn8IG62hObRLiFh8USMQjnT6UzY15AuPKjVeBHwe9a9BVCU91UftpqfNzCQ/exec";
-let activeUser = "";
-let isLocked = false;
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwRd15pg_DwB6w9KnGmIa2O9gZ_Z21O0GtC90kxeBGbTx-uDcnt9rnQxGwS63zgyeRFTg/exec";
 
-const juniorSubjects = ["Basic Technology", "Business Studies", "Religious Studies", "Digital Technologies", "English Studies", "French", "Intermediate Science", "Mathematics", "Nigerian History", "Physical and Health Education", "Pre Vocational Studies", "Social and Citizenship Studies", "Social Studies", "Yoruba"];
-const seniorSubjects = ["English Language", "Digital Technology", "Mathematics", "Citizenship Education", "Biology", "Geography", "Chemistry", "Physics", "Further Mathematics", "Agriculture Science", "Economics", "Financial Accounting", "Commerce", "Literature In English", "Yoruba", "Government", "Religious Studies"];
-
-const studentDatabase = {
-    "Basic 7": [{n: "Adewale John", c: "BOPC/B7/01"}, {n: "Chukwuma Ngozi", c: "BOPC/B7/02"}],
-    "Senior 1": [{n: "Olatunji Bola", c: "BOPC/S1/101"}, {n: "Smith Sarah", c: "BOPC/S1/102"}]
-    // ADD ALL CLASSES HERE
+const PERMISSIONS = {
+    "A9K2":{sub:"English Language",arm:"Senior"}, "B7M4":{sub:"Digital Technology",arm:"Senior"},
+    "Q3F8":{sub:"Mathematics",arm:"Senior"}, "Z2L9":{sub:"Citizenship Education",arm:"Senior"},
+    "M4D7":{sub:"Biology",arm:"Senior"}, "X9P2":{sub:"Geography",arm:"Senior"},
+    "H6K5":{sub:"Chemistry",arm:"Senior"}, "N1S8":{sub:"Physics",arm:"Senior"},
+    "E7W3":{sub:"Further Mathematics",arm:"Senior"}, "J4Q9":{sub:"Agriculture Science",arm:"Senior"},
+    "P5T7":{sub:"Economics",arm:"Senior"}, "F9B4":{sub:"Financial Accounting",arm:"Senior"},
+    "K3E6":{sub:"Commerce",arm:"Senior"}, "W5M9":{sub:"Literature In English",arm:"Senior"},
+    "A6N4":{sub:"Yoruba",arm:"Senior"}, "G8C3":{sub:"Government",arm:"Senior"},
+    "R2J7":{sub:"Religious Studies",arm:"Senior"}, "R5C1":{sub:"Basic Technology",arm:"Junior"},
+    "C2R6":{sub:"Business Studies",arm:"Junior"}, "S7H2":{sub:"Religious Studies",arm:"Junior"},
+    "V9T1":{sub:"Digital Technologies",arm:"Junior"}, "Y4K6":{sub:"English Studies",arm:"Junior"},
+    "M7P3":{sub:"French",arm:"Junior"}, "E2L8":{sub:"Intermediate Science",arm:"Junior"},
+    "B5S9":{sub:"Mathematics",arm:"Junior"}, "Q6D4":{sub:"Nigerian History",arm:"Junior"},
+    "H1W7":{sub:"Physical and Health Education",arm:"Junior"}, "T3F8":{sub:"Pre Vocational Studies",arm:"Junior"},
+    "T8A6":{sub:"Social and Citizenship Studies",arm:"Junior"}, "L8V1":{sub:"Social Studies",arm:"Junior"},
+    "D1X8":{sub:"Yoruba",arm:"Junior"}, "0099":{sub:"ALL",arm:"Master"}
 };
 
-// --- AUTH & LOCKING ---
+const studentDatabase = {
+    "Basic 7": [{n:"Junior Student 1",c:"BOPC/B7/01"}],
+    "Senior 1": [{n:"Senior Student 1",c:"BOPC/S1/101"}]
+};
+
+let activeUser = ""; let isLocked = false;
+
 function verifyAccess() {
     const pin = document.getElementById('staffPin').value;
-    const enc = btoa(pin);
-    if(enc === "MDA5OQ==" || enc === "MTIxMg==") { // 0099 or 1212
-        activeUser = (enc === "MDA5OQ==") ? "ADMIN" : "STAFF-"+pin;
+    const auth = PERMISSIONS[pin];
+    if(auth) {
+        activeUser = pin === "0099" ? "PRINCIPAL" : "STAFF-" + auth.sub;
         document.getElementById('authSection').classList.add('hidden');
         document.getElementById('mainPortal').classList.remove('hidden');
-        if(enc === "MDA5OQ==") document.getElementById('adminControls').classList.remove('hidden');
-    } else { alert("Invalid PIN"); }
+        if(pin === "0099") document.getElementById('adminControls').classList.remove('hidden');
+        document.getElementById('subjectSelect').innerHTML = `<option>${auth.sub}</option>`;
+        const classes = auth.arm === "Junior" ? ["Basic 7","Basic 8","Basic 9"] : (auth.arm === "Senior" ? ["Senior 1","Senior 2","Senior 3"] : ["Basic 7","Senior 1"]);
+        document.getElementById('classSelect').innerHTML = '<option value="">-- Class --</option>' + classes.map(c => `<option value="${c}">${c}</option>`).join('');
+    } else alert("Invalid PIN");
+}
+
+function loadStudents() {
+    const cls = document.getElementById('classSelect').value;
+    const body = document.getElementById('studentTableBody');
+    body.innerHTML = ""; if(!studentDatabase[cls]) return;
+    studentDatabase[cls].forEach(s => {
+        body.innerHTML += `<tr>
+            <td style="text-align:left;"><b>${s.n}</b><br><small>${s.c}</small>
+            <input type="hidden" class="h-name" value="${s.n}"><input type="hidden" class="h-code" value="${s.c}"></td>
+            <td><input type="number" class="t1" onchange="processChange(this)"></td>
+            <td><input type="number" class="t2" onchange="processChange(this)"></td>
+            <td><input type="number" class="note" onchange="processChange(this)"></td>
+            <td><input type="number" class="extra" onchange="processChange(this)"></td>
+            <td><input type="number" class="inter" onchange="processChange(this)"></td>
+            <td class="row-total total-box">0</td></tr>`;
+    });
+}
+
+function processChange(el) {
+    if(isLocked && activeUser !== "PRINCIPAL") return alert("Locked!");
+    const row = el.closest('tr');
+    const lim = {t1:10, t2:10, note:10, extra:5, inter:5};
+    let err = false;
+    Object.keys(lim).forEach(k => {
+        const i = row.querySelector('.'+k); let v = parseFloat(i.value);
+        if(v > lim[k] || v < 0 || isNaN(v)) { err = true; i.style.background = "#ffcdd2"; } else i.style.background = "";
+    });
+    const tot = row.querySelector('.row-total');
+    if(err) { tot.innerText = "ERR"; tot.style.color="red"; return; }
+    const total = Array.from(row.querySelectorAll('input[type="number"]')).reduce((a,b) => a+(parseFloat(b.value)||0), 0);
+    tot.innerText = total.toFixed(1); tot.style.color="var(--blue)";
+    syncToCloud(row, total);
+}
+
+async function syncToCloud(row, total) {
+    document.getElementById('syncStatus').innerText = "Syncing...";
+    try {
+        await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
+            staff: activeUser, class: document.getElementById('classSelect').value,
+            subject: document.getElementById('subjectSelect').value, name: row.querySelector('.h-name').value,
+            code: row.querySelector('.h-code').value, total: total, grade: "CA"
+        })});
+        document.getElementById('syncStatus').innerText = "Synced ✔";
+        document.getElementById('syncStatus').style.color = "var(--green)";
+    } catch (e) { document.getElementById('syncStatus').innerText = "Error!"; }
 }
 
 function toggleLock() {
@@ -148,113 +165,6 @@ function toggleLock() {
     const btn = document.getElementById('lockBtn');
     document.querySelectorAll('input[type="number"]').forEach(i => i.disabled = isLocked);
     btn.innerText = isLocked ? "🔓 Unlock Records" : "🔒 Freeze Records";
-    btn.className = isLocked ? "btn btn-unlock" : "btn btn-lock";
-}
-
-// --- CORE LOGIC ---
-function updateSubjects() {
-    const arm = document.getElementById('armSelect').value;
-    const subSel = document.getElementById('subjectSelect');
-    const classSel = document.getElementById('classSelect');
-    subSel.innerHTML = '<option>-- Select --</option>';
-    classSel.innerHTML = '<option>-- Select --</option>';
-    const list = arm === "Junior" ? juniorSubjects : seniorSubjects;
-    const levels = arm === "Junior" ? ["Basic 7", "Basic 8", "Basic 9"] : ["Senior 1", "Senior 2", "Senior 3"];
-    list.forEach(s => subSel.innerHTML += `<option>${s}</option>`);
-    levels.forEach(l => classSel.innerHTML += `<option>${l}</option>`);
-}
-
-function loadStudents() {
-    const cls = document.getElementById('classSelect').value;
-    const body = document.getElementById('studentTableBody');
-    body.innerHTML = "";
-    if(!studentDatabase[cls]) return;
-    studentDatabase[cls].forEach(s => {
-        body.innerHTML += `<tr>
-            <td class="stu-info">${s.n}<br><small>${s.c}</small>
-                <input type="hidden" class="h-name" value="${s.n}"><input type="hidden" class="h-code" value="${s.c}">
-            </td>
-            <td><input type="number" class="t1" onchange="processChange(this)"></td>
-            <td><input type="number" class="t2" onchange="processChange(this)"></td>
-            <td><input type="number" class="note" onchange="processChange(this)"></td>
-            <td><input type="number" class="extra" onchange="processChange(this)"></td>
-            <td><input type="number" class="inter" onchange="processChange(this)"></td>
-            <td><input type="number" class="exam exam-input" onchange="processChange(this)"></td>
-            <td class="row-total">0</td><td class="row-grade">-</td>
-        </tr>`;
-    });
-    updateSummary();
-}
-
-function processChange(el) {
-    if(isLocked && activeUser !== "ADMIN") { alert("Record is Locked!"); location.reload(); return; }
-    
-    const row = el.closest('tr');
-    let hasError = false;
-    const limits = { t1:10, t2:10, note:10, extra:5, inter:5, exam:60 };
-
-    Object.keys(limits).forEach(k => {
-        const inp = row.querySelector('.'+k);
-        let val = parseFloat(inp.value.replace(/[^0-9.]/g, ''));
-        inp.value = isNaN(val) ? "" : val; 
-        if(val > limits[k] || val < 0) { hasError = true; inp.style.background = "#ffcdd2"; } 
-        else { inp.style.background = ""; }
-    });
-
-    const totalCell = row.querySelector('.row-total');
-    if(hasError) { 
-        totalCell.innerText = "ERR"; totalCell.style.color = "red"; 
-        updateSummary(); return; 
-    }
-
-    const scores = Array.from(row.querySelectorAll('input[type="number"]')).map(i => parseFloat(i.value)||0);
-    const total = scores.reduce((a,b) => a+b, 0);
-    totalCell.innerText = total.toFixed(1);
-    totalCell.style.color = "black";
-
-    let g = "F9";
-    if(total >= 75) g="A1"; else if(total >= 70) g="B2"; else if(total >= 65) g="B3";
-    else if(total >= 60) g="C4"; else if(total >= 55) g="C5"; else if(total >= 50) g="C6";
-    else if(total >= 45) g="D7"; else if(total >= 40) g="E8";
-    row.querySelector('.row-grade').innerText = g;
-
-    updateSummary();
-    syncToCloud(row, total, g);
-}
-
-function updateSummary() {
-    const rows = document.querySelectorAll('#studentTableBody tr');
-    let err = 0, sync = 0;
-    rows.forEach(r => {
-        const t = r.querySelector('.row-total').innerText;
-        if(t === "ERR") err++; else if(parseFloat(t) > 0) sync++;
-    });
-    document.getElementById('statTotal').innerText = rows.length;
-    document.getElementById('statErrors').innerText = err;
-    document.getElementById('statSynced').innerText = sync;
-    document.getElementById('summaryDash').style.borderColor = err > 0 ? "var(--red)" : "var(--green)";
-}
-
-async function syncToCloud(row, total, grade) {
-    const status = document.getElementById('syncStatus');
-    status.innerText = "Syncing...";
-    try {
-        await fetch(CLOUD_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify({
-                staff: activeUser,
-                class: document.getElementById('classSelect').value,
-                subject: document.getElementById('subjectSelect').value,
-                name: row.querySelector('.h-name').value,
-                code: row.querySelector('.h-code').value,
-                total: total,
-                grade: grade
-            })
-        });
-        status.innerText = "Cloud Synced ✔";
-        status.style.color = "var(--green)";
-    } catch (e) { status.innerText = "Sync Error!"; status.style.color = "var(--red)"; }
 }
 </script>
 </body>
