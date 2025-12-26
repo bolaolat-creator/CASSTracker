@@ -26,7 +26,7 @@
 <div class="container">
     <div class="header">
         <h1 style="color:var(--blue); margin:0;">BOLA OLAT PRIVATE COLLEGE</h1>
-        <p style="margin:5px 0;">Continuous Assessment (CA) Management Portal</p>
+        <p style="margin:5px 0;">Staff Continuous Assessment (CA) Portal</p>
     </div>
 
     <div id="authSection">
@@ -37,32 +37,31 @@
     </div>
 
     <div id="mainPortal" class="hidden">
-        <div id="adminControls" class="hidden" style="background:#e3f2fd; padding:15px; border-radius:10px; margin-bottom:15px; border:1px solid var(--blue);">
-            <button id="lockBtn" class="btn" style="background:var(--red);" onclick="toggleLock()">🔒 Freeze Records</button>
-            <span style="margin-left:15px; font-weight:bold; color:var(--blue);">PRINCIPAL MODE</span>
-        </div>
-
         <div class="dashboard-controls">
             <div><label><b>Authorized Subject:</b></label><br>
                 <select id="subjectSelect" style="width:100%; padding:10px; font-weight:bold;" disabled></select>
             </div>
             <div><label><b>Class:</b></label><br>
-                <select id="classSelect" onchange="loadStudents()" style="width:100%; padding:10px; border:1px solid var(--blue);"></select>
+                <select id="classSelect" onchange="loadStudents()" style="width:100%; padding:10px; border:1px solid var(--blue);">
+                    <option value="">-- Select Class --</option>
+                    <option value="Basic 1">Basic 1</option>
+                    <option value="Basic 2">Basic 2</option>
+                    <option value="Basic 3">Basic 3</option>
+                    <option value="Senior 1">Senior 1</option>
+                    <option value="Senior 2">Senior 2</option>
+                    <option value="Senior 3">Senior 3</option>
+                </select>
             </div>
             <div style="text-align:center;"><label><b>Cloud Sync:</b></label><br>
-                <span id="syncStatus" style="color:var(--green);">Ready</span>
+                <span id="syncStatus">Ready</span>
             </div>
         </div>
 
         <table>
             <thead>
                 <tr>
-                    <th style="text-align:left;">Student Name & ID</th>
-                    <th>T1(10)</th>
-                    <th>T2(10)</th>
-                    <th>Note(10)</th>
-                    <th>Ext(5)</th>
-                    <th>Int(5)</th>
+                    <th style="text-align:left;">Student Details</th>
+                    <th>T1(10)</th><th>T2(10)</th><th>Note(10)</th><th>Ext(5)</th><th>Int(5)</th>
                     <th style="background:var(--gold); color:black;">CA Total (40)</th>
                 </tr>
             </thead>
@@ -74,43 +73,30 @@
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwRd15pg_DwB6w9KnGmIa2O9gZ_Z21O0GtC90kxeBGbTx-uDcnt9rnQxGwS63zgyeRFTg/exec";
 
-const PERMISSIONS = {
-    "A9K2":{sub:"English Language",arm:"Senior"}, "B7M4":{sub:"Digital Technology",arm:"Senior"},
-    "Q3F8":{sub:"Mathematics",arm:"Senior"}, "Z2L9":{sub:"Citizenship Education",arm:"Senior"},
-    "M4D7":{sub:"Biology",arm:"Senior"}, "X9P2":{sub:"Geography",arm:"Senior"},
-    "H6K5":{sub:"Chemistry",arm:"Senior"}, "N1S8":{sub:"Physics",arm:"Senior"},
-    "E7W3":{sub:"Further Mathematics",arm:"Senior"}, "J4Q9":{sub:"Agriculture Science",arm:"Senior"},
-    "P5T7":{sub:"Economics",arm:"Senior"}, "F9B4":{sub:"Financial Accounting",arm:"Senior"},
-    "K3E6":{sub:"Commerce",arm:"Senior"}, "W5M9":{sub:"Literature In English",arm:"Senior"},
-    "A6N4":{sub:"Yoruba",arm:"Senior"}, "G8C3":{sub:"Government",arm:"Senior"},
-    "R2J7":{sub:"Religious Studies",arm:"Senior"}, "R5C1":{sub:"Basic Technology",arm:"Junior"},
-    "C2R6":{sub:"Business Studies",arm:"Junior"}, "S7H2":{sub:"Religious Studies",arm:"Junior"},
-    "V9T1":{sub:"Digital Technologies",arm:"Junior"}, "Y4K6":{sub:"English Studies",arm:"Junior"},
-    "M7P3":{sub:"French",arm:"Junior"}, "E2L8":{sub:"Intermediate Science",arm:"Junior"},
-    "B5S9":{sub:"Mathematics",arm:"Junior"}, "Q6D4":{sub:"Nigerian History",arm:"Junior"},
-    "H1W7":{sub:"Physical and Health Education",arm:"Junior"}, "T3F8":{sub:"Pre Vocational Studies",arm:"Junior"},
-    "T8A6":{sub:"Social and Citizenship Studies",arm:"Junior"}, "L8V1":{sub:"Social Studies",arm:"Junior"},
-    "D1X8":{sub:"Yoruba",arm:"Junior"}, "0099":{sub:"ALL",arm:"Master"}
-};
-
+// FULL STUDENT DATABASE AS REQUESTED
 const studentDatabase = {
-    "Basic 7": [{n:"Junior Student 1",c:"BOPC/B7/01"}],
-    "Senior 1": [{n:"Senior Student 1",c:"BOPC/S1/101"}]
+    "Basic 1": [{n:"Student BOC1226",c:"BOC1226"},{n:"Student BOC1227",c:"BOC1227"},{n:"Student BOC1229",c:"BOC1229"},{n:"Student BOC1230",c:"BOC1230"},{n:"Student BOC1231",c:"BOC1231"},{n:"Student BOC1234",c:"BOC1234"},{n:"Student BOC1235",c:"BOC1235"},{n:"Student BOC1237",c:"BOC1237"},{n:"Student BOC1239",c:"BOC1239"},{n:"Student BOC1240",c:"BOC1240"},{n:"Student BOC1241",c:"BOC1241"},{n:"Student BOC1242",c:"BOC1242"},{n:"Student BOC1246",c:"BOC1246"},{n:"Student BOC1247",c:"BOC1247"},{n:"Student BOC1249",c:"BOC1249"},{n:"Student BOC1251",c:"BOC1251"},{n:"Student BOC1252",c:"BOC1252"},{n:"Student BOC1256",c:"BOC1256"},{n:"Student BOC1257",c:"BOC1257"},{n:"Student BOC1258",c:"BOC1258"},{n:"Student BOC1259",c:"BOC1259"},{n:"Student BOC1261",c:"BOC1261"},{n:"Student BOC1263",c:"BOC1263"},{n:"Student BOC1264",c:"BOC1264"},{n:"Student BOC1265",c:"BOC1265"},{n:"Student BOC1267",c:"BOC1267"},{n:"Student BOC1270",c:"BOC1270"},{n:"Student BOC1271",c:"BOC1271"},{n:"Student BOC1272",c:"BOC1272"},{n:"Student BOC1273",c:"BOC1273"},{n:"Student BOC1274",c:"BOC1274"},{n:"Student BOC1276",c:"BOC1276"},{n:"Student BOC1277",c:"BOC1277"},{n:"Student BOC1278",c:"BOC1278"},{n:"Student BOC1279",c:"BOC1279"},{n:"Student BOC1280",c:"BOC1280"}],
+    "Basic 2": [{n:"Student BOC1150",c:"BOC1150"},{n:"Student BOC1151",c:"BOC1151"},{n:"Student BOC1152",c:"BOC1152"},{n:"Student BOC1153",c:"BOC1153"},{n:"Student BOC1154",c:"BOC1154"},{n:"Student BOC1155",c:"BOC1155"},{n:"Student BOC1156",c:"BOC1156"},{n:"Student BOC1157",c:"BOC1157"},{n:"Student BOC1158",c:"BOC1158"},{n:"Student BOC1159",c:"BOC1159"},{n:"Student BOC1160",c:"BOC1160"},{n:"Student BOC1161",c:"BOC1161"},{n:"Student BOC1162",c:"BOC1162"},{n:"Student BOC1163",c:"BOC1163"},{n:"Student BOC1164",c:"BOC1164"},{n:"Student BOC1165",c:"BOC1165"},{n:"Student BOC1166",c:"BOC1166"},{n:"Student BOC1167",c:"BOC1167"},{n:"Student BOC1183",c:"BOC1183"},{n:"Student BOC1184",c:"BOC1184"},{n:"Student BOC1185",c:"BOC1185"},{n:"Student BOC1186",c:"BOC1186"},{n:"Student BOC1187",c:"BOC1187"},{n:"Student BOC1188",c:"BOC1188"},{n:"Student BOC1189",c:"BOC1189"},{n:"Student BOC1190",c:"BOC1190"},{n:"Student BOC1193",c:"BOC1193"},{n:"Student BOC1194",c:"BOC1194"},{n:"Student BOC1195",c:"BOC1195"},{n:"Student BOC1197",c:"BOC1197"},{n:"Student BOC1198",c:"BOC1198"},{n:"Student BOC1199",c:"BOC1199"},{n:"Student BOC1201",c:"BOC1201"},{n:"Student BOC1202",c:"BOC1202"},{n:"Student BOC1203",c:"BOC1203"},{n:"Student BOC1204",c:"BOC1204"},{n:"Student BOC1205",c:"BOC1205"},{n:"Student BOC1207",c:"BOC1207"},{n:"Student BOC1211",c:"BOC1211"},{n:"Student BOC1214",c:"BOC1214"}],
+    "Basic 3": [{n:"Student BOC1100",c:"BOC1100"},{n:"Student BOC1101",c:"BOC1101"},{n:"Student BOC1105",c:"BOC1105"},{n:"Student BOC1111",c:"BOC1111"},{n:"Student BOC1113",c:"BOC1113"},{n:"Student BOC1102",c:"BOC1102"},{n:"Student BOC1127",c:"BOC1127"},{n:"Student BOC1121",c:"BOC1121"},{n:"Student BOC1118",c:"BOC1118"},{n:"Student BOC1116",c:"BOC1116"},{n:"Student BOC1117",c:"BOC1117"},{n:"Student BOC1126",c:"BOC1126"},{n:"Student BOC1119",c:"BOC1119"},{n:"Student BOC1123",c:"BOC1123"},{n:"Student BOC1103",c:"BOC1103"},{n:"Student BOC1107",c:"BOC1107"},{n:"Student BOC1120",c:"BOC1120"},{n:"Student BOC1136",c:"BOC1136"},{n:"Student BOC1135",c:"BOC1135"},{n:"Student BOC1122",c:"BOC1122"},{n:"Student BOC1106",c:"BOC1106"},{n:"Student BOC1139",c:"BOC1139"},{n:"Student BOC1145",c:"BOC1145"},{n:"Student BOC1109",c:"BOC1109"},{n:"Student BOC1169",c:"BOC1169"},{n:"Student BOC1170",c:"BOC1170"},{n:"Student BOC1220",c:"BOC1220"},{n:"Student BOC1221",c:"BOC1221"},{n:"Student BOC1223",c:"BOC1223"},{n:"Student BOC1225",c:"BOC1225"},{n:"Student BOC1228",c:"BOC1228"},{n:"Student BOC1232",c:"BOC1232"},{n:"Student BOC1248",c:"BOC1248"},{n:"Student BOC1260",c:"BOC1260"}],
+    "Senior 1": [{n:"Student BOC1086",c:"BOC1086"},{n:"Student BOC1037",c:"BOC1037"},{n:"Student BOC1048",c:"BOC1048"},{n:"Student BOC1088",c:"BOC1088"},{n:"Student BOC1089",c:"BOC1089"},{n:"Student BOC1053",c:"BOC1053"},{n:"Student BOC1057",c:"BOC1057"},{n:"Student BOC1090",c:"BOC1090"},{n:"Student BOC1064",c:"BOC1064"},{n:"Student BOC1054",c:"BOC1054"},{n:"Student BOC1051",c:"BOC1051"},{n:"Student BOC1031",c:"BOC1031"},{n:"Student BOC1047",c:"BOC1047"},{n:"Student BOC1038",c:"BOC1038"},{n:"Student BOC1027",c:"BOC1027"},{n:"Student BOC1092",c:"BOC1092"},{n:"Student BOC1041",c:"BOC1041"},{n:"Student BOC1128",c:"BOC1128"},{n:"Student BOC1045",c:"BOC1045"},{n:"Student BOC1040",c:"BOC1040"},{n:"Student BOC1030",c:"BOC1030"},{n:"Student BOC1072",c:"BOC1072"},{n:"Student BOC1171",c:"BOC1171"},{n:"Student BOC1173",c:"BOC1173"},{n:"Student BOC1209",c:"BOC1209"},{n:"Student BOC1022",c:"BOC1022"},{n:"Student BOC1029",c:"BOC1029"},{n:"Student BOC1039",c:"BOC1039"},{n:"Student BOC1043",c:"BOC1043"},{n:"Student BOC1052",c:"BOC1052"},{n:"Student BOC1083",c:"BOC1083"},{n:"Student BOC1084",c:"BOC1084"},{n:"Student BOC1085",c:"BOC1085"},{n:"Student BOC1236",c:"BOC1236"},{n:"Student BOC1238",c:"BOC1238"},{n:"Student BOC1243",c:"BOC1243"},{n:"Student BOC1244",c:"BOC1244"},{n:"Student BOC1245",c:"BOC1245"},{n:"Student BOC1253",c:"BOC1253"},{n:"Student BOC1254",c:"BOC1254"},{n:"Student BOC1262",c:"BOC1262"},{n:"Student BOC1266",c:"BOC1266"},{n:"Student BOC1269",c:"BOC1269"},{n:"Student BOC1275",c:"BOC1275"}],
+    "Senior 2": [{n:"Student BOC997",c:"BOC997"},{n:"Student BOC1082",c:"BOC1082"},{n:"Student BOC1093",c:"BOC1093"},{n:"Student BOC1004",c:"BOC1004"},{n:"Student BOC1025",c:"BOC1025"},{n:"Student BOC1018",c:"BOC1018"},{n:"Student BOC1079",c:"BOC1079"},{n:"Student BOC1087",c:"BOC1087"},{n:"Student BOC1063",c:"BOC1063"},{n:"Student BOC999",c:"BOC999"},{n:"Student BOC1077",c:"BOC1077"},{n:"Student BOC1060",c:"BOC1060"},{n:"Student BOC1036",c:"BOC1036"},{n:"Student BOC1006",c:"BOC1006"},{n:"Student BOC1017",c:"BOC1017"},{n:"Student BOC1148",c:"BOC1148"},{n:"Student BOC1174",c:"BOC1174"},{n:"Student BOC1175",c:"BOC1175"},{n:"Student BOC1177",c:"BOC1177"},{n:"Student BOC1178",c:"BOC1178"},{n:"Student BOC1179",c:"BOC1179"},{n:"Student BOC1182",c:"BOC1182"},{n:"Student BOC1191",c:"BOC1191"},{n:"Student BOC1208",c:"BOC1208"},{n:"Student BOC1210",c:"BOC1210"},{n:"Student BOC1219",c:"BOC1219"},{n:"Student BOC1233",c:"BOC1233"},{n:"Student BOC1250",c:"BOC1250"},{n:"Student BOC1255",c:"BOC1255"},{n:"Student BOC1268",c:"BOC1268"}],
+    "Senior 3": [{n:"Student BOC1044",c:"BOC1044"},{n:"Student BOC988",c:"BOC988"},{n:"Student BOC1076",c:"BOC1076"},{n:"Student BOC1075",c:"BOC1075"},{n:"Student BOC1074",c:"BOC1074"},{n:"Student BOC1073",c:"BOC1073"},{n:"Student BOC979",c:"BOC979"},{n:"Student BOC986",c:"BOC986"},{n:"Student BOC980",c:"BOC980"},{n:"Student BOC1005",c:"BOC1005"},{n:"Student BOC983",c:"BOC983"},{n:"Student BOC992",c:"BOC992"},{n:"Student BOC1019",c:"BOC1019"},{n:"Student BOC1112",c:"BOC1112"},{n:"Student BOC1133",c:"BOC1133"},{n:"Student BOC1134",c:"BOC1134"},{n:"Student BOC1125",c:"BOC1125"},{n:"Student BOC1130",c:"BOC1130"},{n:"Student BOC1137",c:"BOC1137"},{n:"Student BOC1140",c:"BOC1140"},{n:"Student BOC1146",c:"BOC1146"},{n:"Student BOC1081",c:"BOC1081"},{n:"Student BOC1213",c:"BOC1213"},{n:"Student BOC1224",c:"BOC1224"}]
 };
 
-let activeUser = ""; let isLocked = false;
+const PERMISSIONS = {
+    "A9K2":{sub:"English",arm:"Senior"},"Q3F8":{sub:"Mathematics",arm:"Senior"},"B5S9":{sub:"Mathematics",arm:"Junior"},"Y4K6":{sub:"English",arm:"Junior"},"0099":{sub:"ALL",arm:"Master"}
+};
+
+let activeUser = "";
 
 function verifyAccess() {
     const pin = document.getElementById('staffPin').value;
     const auth = PERMISSIONS[pin];
     if(auth) {
-        activeUser = pin === "0099" ? "PRINCIPAL" : "STAFF-" + auth.sub;
+        activeUser = pin === "0099" ? "Principal" : "Staff-" + auth.sub;
         document.getElementById('authSection').classList.add('hidden');
         document.getElementById('mainPortal').classList.remove('hidden');
-        if(pin === "0099") document.getElementById('adminControls').classList.remove('hidden');
         document.getElementById('subjectSelect').innerHTML = `<option>${auth.sub}</option>`;
-        const classes = auth.arm === "Junior" ? ["Basic 7","Basic 8","Basic 9"] : (auth.arm === "Senior" ? ["Senior 1","Senior 2","Senior 3"] : ["Basic 7","Senior 1"]);
-        document.getElementById('classSelect').innerHTML = '<option value="">-- Class --</option>' + classes.map(c => `<option value="${c}">${c}</option>`).join('');
     } else alert("Invalid PIN");
 }
 
@@ -132,7 +118,6 @@ function loadStudents() {
 }
 
 function processChange(el) {
-    if(isLocked && activeUser !== "PRINCIPAL") return alert("Locked!");
     const row = el.closest('tr');
     const lim = {t1:10, t2:10, note:10, extra:5, inter:5};
     let err = false;
@@ -141,9 +126,9 @@ function processChange(el) {
         if(v > lim[k] || v < 0 || isNaN(v)) { err = true; i.style.background = "#ffcdd2"; } else i.style.background = "";
     });
     const tot = row.querySelector('.row-total');
-    if(err) { tot.innerText = "ERR"; tot.style.color="red"; return; }
+    if(err) { tot.innerText = "ERR"; return; }
     const total = Array.from(row.querySelectorAll('input[type="number"]')).reduce((a,b) => a+(parseFloat(b.value)||0), 0);
-    tot.innerText = total.toFixed(1); tot.style.color="var(--blue)";
+    tot.innerText = total.toFixed(1);
     syncToCloud(row, total);
 }
 
@@ -153,18 +138,10 @@ async function syncToCloud(row, total) {
         await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
             staff: activeUser, class: document.getElementById('classSelect').value,
             subject: document.getElementById('subjectSelect').value, name: row.querySelector('.h-name').value,
-            code: row.querySelector('.h-code').value, total: total, grade: "CA"
+            code: row.querySelector('.h-code').value, total: total
         })});
         document.getElementById('syncStatus').innerText = "Synced ✔";
-        document.getElementById('syncStatus').style.color = "var(--green)";
     } catch (e) { document.getElementById('syncStatus').innerText = "Error!"; }
-}
-
-function toggleLock() {
-    isLocked = !isLocked;
-    const btn = document.getElementById('lockBtn');
-    document.querySelectorAll('input[type="number"]').forEach(i => i.disabled = isLocked);
-    btn.innerText = isLocked ? "🔓 Unlock Records" : "🔒 Freeze Records";
 }
 </script>
 </body>
